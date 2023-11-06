@@ -14,7 +14,7 @@ runs:
       id: tar
       run: |
         shopt -s globstar
-        find ${{ inputs.path }} -type f -print0 | xargs -0 tar -cvf artifact.tar
+        find ${{ inputs.path }} -type f -print0 | xargs -0 tar -cvf artifact.tar || true
         ls -la artifact.tar
       shell: bash
     - name: Upload - 1st attempt
