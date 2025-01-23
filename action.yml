@@ -19,7 +19,7 @@ runs:
       shell: bash
     - name: Upload - 1st attempt
       id: upload1
-      uses: cytopia/upload-artifact-verify-action@v0.1.12
+      uses: manticoresoftware/upload-artifact-verify-action/@v0.1.13
       with:
         name: ${{ inputs.name }}
         path: artifact.tar
@@ -27,7 +27,7 @@ runs:
     - name: Upload build artifacts 2nd attempt
       id: upload2
       if: steps.upload1.outcome == 'failure'
-      uses: cytopia/upload-artifact-verify-action@v0.1.12
+      uses: manticoresoftware/upload-artifact-verify-action/@v0.1.13
       with:
         name: ${{ inputs.name }}
         path: artifact.tar
@@ -35,7 +35,7 @@ runs:
     - name: Upload build artifacts 3rd attempt
       id: upload3
       if: steps.upload2.outcome == 'failure'
-      uses: cytopia/upload-artifact-verify-action@v0.1.12
+      uses: manticoresoftware/upload-artifact-verify-action/@v0.1.13
       with:
         name: ${{ inputs.name }}
         path: artifact.tar
