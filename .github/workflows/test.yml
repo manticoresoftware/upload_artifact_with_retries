@@ -1,0 +1,35 @@
+name: Test artifact upload
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare executable sample
+        run: |
+          mkdir -p sample
+          printf '%s\n' '#!/bin/sh' 'echo ok' > sample/run.sh
+          chmod +x sample/run.sh
+      - name: Upload and verify
+        uses: ./
+        with:
+          name: sample-${{ github.run_id }}
+          path: sample
+      - name: Download for smoke test
+        uses: actions/download-artifact@v7
+        with:
+          name: sample-${{ github.run_id }}
+          path: downloaded
+      - name: Verify archive and executable permissions
+        run: |
+          test -f downloaded/artifact.tar
+          mkdir extracted
+          tar -xf downloaded/artifact.tar -C extracted
+          test -x extracted/sample/run.sh
+          test "$(sh extracted/sample/run.sh)" = "ok"
