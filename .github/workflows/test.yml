@@ -8,7 +8,12 @@ on:
 
 jobs:
   smoke-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [host, container]
     runs-on: ubuntu-22.04
+    container: ${{ matrix.environment == 'container' && 'ubuntu:22.04' || '' }}
     steps:
       - uses: actions/checkout@v4
       - name: Prepare executable sample
@@ -19,12 +24,12 @@ jobs:
       - name: Upload and verify
         uses: ./
         with:
-          name: sample-${{ github.run_id }}
+          name: sample-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.environment }}
           path: sample
       - name: Download for smoke test
         uses: actions/download-artifact@v7
         with:
-          name: sample-${{ github.run_id }}
+          name: sample-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.environment }}
           path: downloaded
       - name: Verify archive and executable permissions
         run: |

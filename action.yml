@@ -66,7 +66,13 @@ runs:
           echo "::error::Uploaded artifact could not be downloaded for verification"
           exit 1
         fi
-        if ! cmp -s artifact.tar "${{ runner.temp }}/artifact-check-${{ steps.upload.outputs.artifact-id }}/artifact.tar"; then
+        # RUNNER_TEMP is mapped to the container filesystem for shell steps.
+        downloaded_archive="$RUNNER_TEMP/artifact-check-${{ steps.upload.outputs.artifact-id }}/artifact.tar"
+        if [[ ! -f "$downloaded_archive" ]]; then
+          echo "::error::Downloaded artifact archive not found: $downloaded_archive"
+          exit 1
+        fi
+        if ! cmp -s artifact.tar "$downloaded_archive"; then
           echo "::error::Downloaded artifact differs from uploaded archive"
           exit 1
         fi
